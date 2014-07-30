@@ -1,0 +1,14 @@
+
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Ultra Bear 1
+Type=Application
+Icon=ultrabear1.png
+Exec=ultrabear1
+Terminal=false
+StartupNotify=false
+GenericName=Platform Game
+Comment=A 2D side scrolling platform game 
+Categories=Game;
+X-Desktop-File-Install-Version=0.15

@@ -1,0 +1,14 @@
+
+# set up the link libraries
+libraries = ['SDL', 'SDL_image', 'SDL_mixer', 'SDL_ttf']
+
+# use all sources
+sources = Glob('*.cpp')
+
+# compiler flags
+cflags = '-W -Wall -pedantic -O3'
+env = Environment(CPPFLAGS = cflags)
+
+# build the program
+env.Program(target = '../bin/ultrabear1', source = sources, LIBS = libraries)
+

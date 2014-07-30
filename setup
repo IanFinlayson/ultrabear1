@@ -1,0 +1,117 @@
+#!/bin/bash
+
+function configure {
+  # if none given, use /usr/local
+  if [ -n "$1" ]; then
+    ULTRA_BEAR_INSTALL_DIR=$1
+  else
+    ULTRA_BEAR_INSTALL_DIR="/usr/local/"
+  fi
+
+  # ensure that it ends with a "/"
+  LAST_LETTER=${ULTRA_BEAR_INSTALL_DIR:(-1)}
+
+  if [ "$LAST_LETTER" != "/" ]; then
+    ULTRA_BEAR_INSTALL_DIR=$ULTRA_BEAR_INSTALL_DIR"/"
+  fi
+
+  # put prefix into file
+  rest="share/ultrabear1"
+  echo "#define UBD_PREFIX \"$ULTRA_BEAR_INSTALL_DIR$rest\"" > src/prefix.h
+
+  # write the dir to a file so can use it when installing
+  echo $ULTRA_BEAR_INSTALL_DIR > .install_dir
+
+  echo "Configred to install to $ULTRA_BEAR_INSTALL_DIR"
+}
+
+
+
+function build {
+  
+  # check if they have bothered to configure
+  if [ -e "src/prefix.h" ]; then
+    # simple
+    scons
+    echo "Built Ultra Bear 1"
+  else
+    echo "You don't seem to have configured Ultra Bear 1"
+    echo "Run ./setup configure [prefix] first" 
+  fi
+}
+
+
+
+function install {
+  # read in the install dir
+  ULTRA_BEAR_INSTALL_DIR=$(cat .install_dir 2>/dev/null)
+  if [ -z "$ULTRA_BEAR_INSTALL_DIR" ]; then
+    echo "You don't seem to have configured Ultra Bear 1"
+    echo "Run ./setup configure [prefix] first"
+    exit
+  fi
+
+  # check if it's built
+  if [ -e "bin/ultrabear1" ]; then
+
+    # copy the files
+    mkdir -p $ULTRA_BEAR_INSTALL_DIR"bin"
+    cp bin/ultrabear1 $ULTRA_BEAR_INSTALL_DIR"bin"
+
+    mkdir -p $ULTRA_BEAR_INSTALL_DIR"share"
+    cp -r share/* $ULTRA_BEAR_INSTALL_DIR"share"
+
+    echo "Installed to $ULTRA_BEAR_INSTALL_DIR"
+  else
+    echo "You don't seem to have built Ultra Bear 1"
+    echo "Run ./setup build first"
+    exit
+  fi
+}
+
+
+function uninstall {
+  # read in the install dir
+  ULTRA_BEAR_INSTALL_DIR=$(cat .install_dir 2>/dev/null)
+  if [ -z "$ULTRA_BEAR_INSTALL_DIR" ]; then
+    echo "You don't seem to have configured Ultra Bear 1"
+    echo "Run ./setup configure [prefix] first"
+    exit
+  fi
+
+  # remove the files
+  rm -f $ULTRA_BEAR_INSTALL_DIR"bin/ultrabear1"
+  rm -rf $ULTRA_BEAR_INSTALL_DIR"share/ultrabear1"
+  rm -f $ULTRA_BEAR_INSTALL_DIR"share/applications/ultrabear1.desktop"
+  rm -f $ULTRA_BEAR_INSTALL_DIR"share/pixmaps/ultrabear1.png"
+}
+
+
+# check what we are doing
+if [ "$1" == "configure" ]; then
+  configure $2
+  exit
+fi
+
+if [ "$1" == "build" ]; then
+  build
+  exit
+fi
+
+if [ "$1" == "install" ]; then
+  install
+  exit
+fi
+
+if [ "$1" == "uninstall" ]; then
+  uninstall
+  exit
+fi
+
+echo "Usage:"
+echo "  setup configure [prefix]"
+echo "  setup build"
+echo "  setup install"
+echo "  setup uninstall"
+
+

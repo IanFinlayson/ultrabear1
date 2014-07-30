@@ -1,0 +1,4 @@
+
+# build ultra bear
+SConscript('src/Sconscript', variant_dir = 'bin', duplicate = 0)
+
