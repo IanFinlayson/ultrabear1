@@ -10,7 +10,7 @@ In order to build and install this software:
 
   1. Run "./setup configure" in the root directory.  If you want to install the
      software to another location other than /usr/local, you can specify that
-     with "./setup configure <dir>" instead.
+     with "./setup configure [dir]" instead.
 
   2. Run "./setup build" which will compile the software.
 
